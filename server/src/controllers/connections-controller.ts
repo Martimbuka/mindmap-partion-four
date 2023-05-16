@@ -1,7 +1,7 @@
 import { IConnection, IConnectionData } from "../interfaces/connections";
-import fs from 'fs';
+import { read, write } from "../utils/file-system";
 
-const connectionsJSON: string = '../../resources/connections.json';
+const connectionsJSON: string = 'resources/connections.json';
 
 export class ConnectionController {
     private connectionsData: IConnectionData;
@@ -11,11 +11,15 @@ export class ConnectionController {
             connections: []
         };
     }
-    
 
-    public async init() {
-        const connections = await fs.readFileSync(connectionsJSON, 'utf-8');
-        this.connectionsData = JSON.parse(connections);
+
+    public async init(): Promise<void> {
+        try {
+            const connections = await read(connectionsJSON);
+            this.connectionsData = JSON.parse(connections);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     public getConnections() {
@@ -33,30 +37,24 @@ export class ConnectionController {
         }
     }
 
-    public async addConnection(connection: IConnection) {
+    public async addConnection(connection: IConnection): Promise<void> {
+        const connectionIndex = this.connectionsData.connections.findIndex((connection: IConnection) => connection.id === connection.id);
+
+        if (connectionIndex !== -1) {
+            throw 'Connection already exists';
+        }
+
         this.connectionsData.connections.push(connection);
-        await fs.writeFileSync(connectionsJSON, JSON.stringify(this.connectionsData));
+        await write(connectionsJSON, JSON.stringify(this.connectionsData.connections));
     }
 
-    public async updateConnection(id: number, connection: IConnection) {
-        const connectionIndex = this.connectionsData.connections.findIndex((connection: IConnection) => connection.id === id);
-
-        if (connectionIndex !== -1) {
-            this.connectionsData.connections[connectionIndex] = connection;
-            await fs.writeFileSync(connectionsJSON, JSON.stringify(this.connectionsData.connections));
-        } else {
-            throw new Error('Connection not found');
-        }
+    public async updateConnection(index: number, connection: IConnection): Promise<void> {
+        this.connectionsData.connections[index] = connection;
+        await write(connectionsJSON, JSON.stringify(this.connectionsData.connections));
     }
 
-    public async deleteConnection(id: number) {
-        const connectionIndex = this.connectionsData.connections.findIndex((connection: IConnection) => connection.id === id);
-
-        if (connectionIndex !== -1) {
-            this.connectionsData.connections.splice(connectionIndex, 1);
-            await fs.writeFileSync(connectionsJSON, JSON.stringify(this.connectionsData.connections));
-        } else {
-            throw new Error('Connection not found');
-        }
+    public async deleteConnection(index: number): Promise<void> {
+        this.connectionsData.connections.splice(index, 1);
+        await write(connectionsJSON, JSON.stringify(this.connectionsData.connections));
     }
 }

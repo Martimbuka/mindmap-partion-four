@@ -1,3 +1,18 @@
 {
-    "id": 1
+    "nodes": [
+        {
+            "id": 2,
+            "label": "name",
+            "xPos": 100,
+            "yPos": 100,
+            "mindmapId": 3,
+            "parentId": 2,
+            "parent": null,
+            "children": null,
+            "createdAt": "2023-05-16T20:06:11.191Z",
+            "updatedAt": "2023-05-16T20:06:11.191Z",
+            "SourceConnectionNode": null,
+            "TargetConnectionNode": null
+        }
+    ]
 }

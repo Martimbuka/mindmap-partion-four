@@ -30,13 +30,7 @@ router.get('/', (request: Request, response: Response) => {
 });
 
 
-router.get('/connections', (req: Request, res: Response) => {
-    const connections = connectionsController.getConnections();
-
-    res.json(connections);
-});
-
-router.post('/connections', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
     const { id, label, target, sourceNodeId, targetNodeId } = req.body;
     
     const newConnection: IConnection = {
@@ -52,19 +46,18 @@ router.post('/connections', async (req: Request, res: Response) => {
     try {
         await connectionsController.addConnection(newConnection);
             
-        res.status(201).json(newConnection);
+        res.status(201).json({message: "Connection added successfully", connection: newConnection});
     } catch (error) {
-        res.status(500).json({ message: + "/Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 
 
-router.put('/connections/:id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     const connectionId = parseInt(req.params.id);
     const { label } = req.body;
 
-    const connections = connectionsController.getConnections().connections;
-
+    const connections = connectionsController.getConnections().connections;;
     const connectionIndex = connections.findIndex((connection: IConnection) => connection.id === connectionId);
 
     if (connectionIndex !== -1) {
@@ -76,15 +69,15 @@ router.put('/connections/:id', async (req: Request, res: Response) => {
 
         connections[connectionIndex] = updatedConnection;
         
-        await connectionsController.updateConnection(connectionId, updatedConnection);
+        await connectionsController.updateConnection(connectionIndex, updatedConnection);
 
-        res.json(updatedConnection);
+        res.json({message: "Successfully updated connection", connection: updatedConnection});
         } else {
             res.status(404).json({ message: 'Connection not found' });
         }
     });
 
-router.delete('/connections/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
     const connectionId = parseInt(req.params.id);
 
     const connections = connectionsController.getConnections().connections;

@@ -12,7 +12,7 @@ export class NodeController {
         };
     }
 
-    public async init() {
+    public async init(): Promise<void> {
         try {
             const nodes = await read(nodesJSON);
             this.nodesData = JSON.parse(nodes);
@@ -35,31 +35,24 @@ export class NodeController {
         }
     }
 
+    public async addNode(node: INode): Promise<void> {
+        const nodeIndex = this.nodesData.nodes.findIndex((node: INode) => node.id === node.id);
 
-    public async addNode(node: INode) {
+        if (nodeIndex !== -1) {
+            throw 'Node already exists';
+        }
+
         this.nodesData.nodes.push(node);
-        await write(nodesJSON, JSON.stringify(this.nodesData.nodes));
+        await write(nodesJSON, JSON.stringify(this.nodesData));
     }
 
-    public async updateNode(id: number, node: INode) {
-        const nodeIndex = this.nodesData.nodes.findIndex((node: INode) => node.id === id);
-
-        if (nodeIndex !== -1) {
-            this.nodesData.nodes[nodeIndex] = node;
-            await write(nodesJSON, JSON.stringify(this.nodesData.nodes));
-        } else {
-            throw new Error('Node not found');
-        }
+    public async updateNode(index: number, node: INode): Promise<void> {
+        this.nodesData.nodes[index] = node;
+        await write(nodesJSON, JSON.stringify(this.nodesData));
     }
 
-    public async deleteNode(id: number) {
-        const nodeIndex = this.nodesData.nodes.findIndex((node: INode) => node.id === id);
-
-        if (nodeIndex !== -1) {
-            this.nodesData.nodes.splice(nodeIndex, 1);
-            await write(nodesJSON, JSON.stringify(this.nodesData.nodes));
-        } else {
-            throw new Error('Node not found');
-        }
+    public async deleteNode(index: number): Promise<void> {
+        this.nodesData.nodes.splice(index, 1);
+        await write(nodesJSON, JSON.stringify(this.nodesData));
     }
 }
