@@ -1,11 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { INode } from '../interfaces/nodes';
 import { NodeController } from '../controllers/nodes-controller';
-import fs from 'fs';
-import path from 'path';
 
 const router = Router();
-const nodesJSON: string = '../../resources/nodes.json';
 
 let nodesController: NodeController;
 
@@ -16,7 +13,7 @@ const getNodesController = async (request: Request, response: Response, next: ()
 
         next();
     } catch (error) {
-        response.status(500).json({ message: error.message + "/Internal server error" });
+        response.status(500).json({ message: "/Internal server error" });
     }
 }
 
@@ -28,7 +25,7 @@ router.get('/', (request: Request, response: Response) => {
 
         response.status(200).json(nodes);
     } catch (error) {
-        response.status(500).json({ message: error.message + "/Internal server error" });
+        response.status(500).json({ message: "/Internal server error" });
     }
 });
 
@@ -46,8 +43,7 @@ router.post('/nodes', async (req: Request, res: Response) => {
     const SourceConnectionNode = null;
     const TargetConnectionNode = null;
 
-    const nodes = nodesController.getNodes();
-    const newNode = {
+    const newNode : INode = {
         id,
         label,
         xPos,
@@ -66,7 +62,7 @@ router.post('/nodes', async (req: Request, res: Response) => {
         await nodesController.addNode(newNode);        
         res.status(201).json(newNode);
     } catch (error) {
-        res.status(500).json({ message: error.message + "/Internal server error" });
+        res.status(500).json({ message: "/Internal server error" });
     }
 });
 
@@ -83,7 +79,7 @@ router.put('/nodes/:id', async (req: Request, res: Response) => {
     const nodeIndex = nodes.findIndex(node => node.id === nodeId);
 
     if (nodeIndex >= 0) {
-        const updatedNode = {
+        const updatedNode : INode = {
             id,
             label,
             xPos,
@@ -102,7 +98,7 @@ router.put('/nodes/:id', async (req: Request, res: Response) => {
             await nodesController.updateNode(nodeIndex, updatedNode);
             res.status(200).json(updatedNode);
         } catch (error) {
-            res.status(500).json({ message: error.message + "/Internal server error" });
+            res.status(500).json({ message: "/Internal server error" });
         }
     } else {
         res.status(404).json({ message: "Node not found" });
@@ -120,7 +116,7 @@ router.delete('/nodes/:id', async (req: Request, res: Response) => {
             await nodesController.deleteNode(nodeIndex);
             res.status(200).json({ message: "Node deleted" });
         } catch (error) {
-            res.status(500).json({ message: error.message + "/Internal server error" });
+            res.status(500).json({ message: "/Internal server error" });
         }
     } else {
         res.status(404).json({ message: "Node not found" });

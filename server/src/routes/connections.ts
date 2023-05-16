@@ -1,11 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { IConnection } from '../interfaces/connections';
 import { ConnectionController } from '../controllers/connections-controller';
-import fs from 'fs';
-import path from 'path';
 
 const router = Router();
-const connectionsJSON: string = '../../resources/connections.json';
 
 let connectionsController: ConnectionController;
 
@@ -41,8 +38,6 @@ router.get('/connections', (req: Request, res: Response) => {
 
 router.post('/connections', async (req: Request, res: Response) => {
     const { id, label, target, sourceNodeId, targetNodeId } = req.body;
-
-    const connections = connectionsController.getConnections();
     
     const newConnection: IConnection = {
         id,
@@ -68,7 +63,7 @@ router.put('/connections/:id', async (req: Request, res: Response) => {
     const connectionId = parseInt(req.params.id);
     const { label } = req.body;
 
-    const connections = connectionsController.getConnections();
+    const connections = connectionsController.getConnections().connections;
 
     const connectionIndex = connections.findIndex((connection: IConnection) => connection.id === connectionId);
 
@@ -92,7 +87,7 @@ router.put('/connections/:id', async (req: Request, res: Response) => {
 router.delete('/connections/:id', async (req: Request, res: Response) => {
     const connectionId = parseInt(req.params.id);
 
-    const connections = connectionsController.getConnections();
+    const connections = connectionsController.getConnections().connections;
 
     const connectionIndex = connections.findIndex((connection: IConnection) => connection.id === connectionId);
 

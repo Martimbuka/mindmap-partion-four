@@ -9,3 +9,7 @@ export interface IUser {
     updatedAt: Date;
     mindmaps: IMindmap[];
 }
+
+export interface IUserData {
+    users: IUser[];
+}
