@@ -13,7 +13,7 @@ const getNodesController = async (request: Request, response: Response, next: ()
 
         next();
     } catch (error) {
-        response.status(500).json({ message: "/Internal server error" });
+        response.status(500).json({ message: error });
     }
 }
 
@@ -25,7 +25,7 @@ router.get('/', (request: Request, response: Response) => {
 
         response.status(200).json(nodes);
     } catch (error) {
-        response.status(500).json({ message: "/Internal server error" });
+        response.status(500).json({ message: "Internal server error" });
     }
 });
 
@@ -76,7 +76,7 @@ router.put('/nodes/:id', async (req: Request, res: Response) => {
     const TargetConnectionNode = null;
 
     const nodes = nodesController.getNodes();
-    const nodeIndex = nodes.findIndex(node => node.id === nodeId);
+    const nodeIndex = nodes.nodes.findIndex(node => node.id === nodeId);
 
     if (nodeIndex >= 0) {
         const updatedNode : INode = {
@@ -109,7 +109,7 @@ router.delete('/nodes/:id', async (req: Request, res: Response) => {
     const nodeId = parseInt(req.params.id);
 
     const nodes = nodesController.getNodes();
-    const nodeIndex = nodes.findIndex(node => node.id === nodeId);
+    const nodeIndex = nodes.nodes.findIndex(node => node.id === nodeId);
 
     if (nodeIndex >= 0) {
         try {

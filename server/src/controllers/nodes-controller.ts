@@ -1,7 +1,7 @@
 import { INode, INodeData } from "../interfaces/nodes";
-import fs from 'fs';
+import { read, write } from "../utils/file-system"
 
-const nodesJSON: string = '../../resources/nodes.json';
+const nodesJSON: string = 'resources/nodes.json';
 
 export class NodeController {
     private nodesData: INodeData;
@@ -14,15 +14,15 @@ export class NodeController {
 
     public async init() {
         try {
-            const nodes = await fs.readFileSync(nodesJSON, 'utf-8');
+            const nodes = await read(nodesJSON);
             this.nodesData = JSON.parse(nodes);
-        } catch (error) {
-            throw error;
+        } catch (err) {
+            console.log(err);
         }
     }
 
     public getNodes() {
-        return this.nodesData.nodes;
+        return this.nodesData;
     }
 
     public getNodeById(id: number): INode | undefined {
@@ -38,7 +38,7 @@ export class NodeController {
 
     public async addNode(node: INode) {
         this.nodesData.nodes.push(node);
-        await fs.writeFileSync(nodesJSON, JSON.stringify(this.nodesData.nodes));
+        await write(nodesJSON, JSON.stringify(this.nodesData.nodes));
     }
 
     public async updateNode(id: number, node: INode) {
@@ -46,7 +46,7 @@ export class NodeController {
 
         if (nodeIndex !== -1) {
             this.nodesData.nodes[nodeIndex] = node;
-            await fs.writeFileSync(nodesJSON, JSON.stringify(this.nodesData.nodes));
+            await write(nodesJSON, JSON.stringify(this.nodesData.nodes));
         } else {
             throw new Error('Node not found');
         }
@@ -57,7 +57,7 @@ export class NodeController {
 
         if (nodeIndex !== -1) {
             this.nodesData.nodes.splice(nodeIndex, 1);
-            await fs.writeFileSync(nodesJSON, JSON.stringify(this.nodesData.nodes));
+            await write(nodesJSON, JSON.stringify(this.nodesData.nodes));
         } else {
             throw new Error('Node not found');
         }

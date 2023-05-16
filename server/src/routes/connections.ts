@@ -13,7 +13,7 @@ const getConnectionsController = async (request: Request, response: Response, ne
 
         next();
     } catch (error) {
-        response.status(500).json({ message: "/Internal server error" });
+        response.status(500).json({ message: "Internal server error" });
     }
 };
 
